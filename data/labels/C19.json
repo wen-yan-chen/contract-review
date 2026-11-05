@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 108,
-  "char_total": 11849,
+  "char_total": 11829,
   "industry": "文化传媒",
   "risk_summary": {
     "total": 7,

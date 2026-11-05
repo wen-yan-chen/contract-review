@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 103,
-  "char_total": 11174,
+  "char_total": 11154,
   "industry": "包装印刷",
   "risk_summary": {
     "total": 8,

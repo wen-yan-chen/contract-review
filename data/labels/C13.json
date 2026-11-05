@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 105,
-  "char_total": 11655,
+  "char_total": 11635,
   "industry": "纺织制造",
   "risk_summary": {
     "total": 5,

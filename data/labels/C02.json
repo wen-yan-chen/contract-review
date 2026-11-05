@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 97,
-  "char_total": 10544,
+  "char_total": 10523,
   "industry": "个人经营",
   "risk_summary": {
     "total": 0,

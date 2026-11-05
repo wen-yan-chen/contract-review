@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 99,
-  "char_total": 10701,
+  "char_total": 10681,
   "industry": "软件服务",
   "risk_summary": {
     "total": 7,

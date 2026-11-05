@@ -353,8 +353,8 @@ RULES = [
         sug_keywords=["最高债权额", "超出部分"],
         problem="采用最高额担保却未约定具体最高债权额，以出借人核定的授信余额为准，担保范围随出借人内部核定浮动，保证人责任边界不确定，条款易被认定为约定不明。",
         section="担保",
-        common="保证人同意在本合同约定的最高额担保范围内为借款人提供担保。",
-        ok="本最高额担保所担保的最高债权额以本合同担保条款载明的金额为准，包括本金、利息、罚息、复利及实现债权的费用。",
+        common="本合同项下担保按下列约定执行。",
+        ok="本最高额担保所担保的最高债权额为人民币{amount}，包括本金、利息、罚息、复利及实现债权的费用。",
         bad="保证人在最高额度内为借款人提供担保，具体最高债权额以出借人核定的授信余额为准，保证人对此不持异议。",
     ),
     _rule(
@@ -1661,8 +1661,13 @@ def _fill(text: str, c: dict) -> str:
     return text.format_map(vars_)
 
 
-def _pair_body(rule: dict, planted: bool) -> str:
-    return rule["common"] + (rule["bad"] if planted else rule["ok"])
+def _pair_body(rule: dict, planted: bool, c: dict | None = None) -> str:
+    # 合规条款保留 common 铺垫（去掉后条款变为孤立句子，实测误报反而上升到 37.5%）
+    text = rule["common"] + (rule["bad"] if planted else rule["ok"])
+    # 支持 {amount} 等占位符：按合同参数渲染，避免写死数值与合同冲突
+    if c is not None and "{" in text:
+        return _fill(text, c)
+    return text
 
 
 def assemble_clauses(c: dict, plan_row: dict, seed: int) -> list[dict]:
@@ -1732,7 +1737,7 @@ def assemble_clauses(c: dict, plan_row: dict, seed: int) -> list[dict]:
 
     def total_len() -> int:
         return (sum(len(x["text"]) for x in chosen)
-                + sum(len(_pair_body(RULE_BY_ID[p["rule_id"]], p["planted"])) for p in pairs))
+                + sum(len(_pair_body(RULE_BY_ID[p["rule_id"]], p["planted"], c)) for p in pairs))
 
     # 长度不足：补入未使用的片段（取满条目），上限 110 条
     reserve = [bp for s in SECTION_ORDER for bp in unused[s]]
@@ -1749,7 +1754,7 @@ def assemble_clauses(c: dict, plan_row: dict, seed: int) -> list[dict]:
 
     for p in pairs:
         rule = RULE_BY_ID[p["rule_id"]]
-        p["text"] = _pair_body(rule, p["planted"])
+        p["text"] = _pair_body(rule, p["planted"], c)
 
     # 按章节顺序合并，章内打乱
     grouped: dict[str, list[dict]] = {s: [] for s in SECTION_ORDER}

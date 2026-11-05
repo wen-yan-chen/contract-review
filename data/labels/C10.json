@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 96,
-  "char_total": 10508,
+  "char_total": 10488,
   "industry": "餐饮连锁",
   "risk_summary": {
     "total": 7,

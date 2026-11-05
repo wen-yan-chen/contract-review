@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 106,
-  "char_total": 11711,
+  "char_total": 11692,
   "industry": "建筑公司",
   "risk_summary": {
     "total": 5,

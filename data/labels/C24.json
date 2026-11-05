@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 97,
-  "char_total": 10640,
+  "char_total": 10620,
   "industry": "家电零售",
   "risk_summary": {
     "total": 7,

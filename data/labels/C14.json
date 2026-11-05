@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 97,
-  "char_total": 10555,
+  "char_total": 10535,
   "industry": "食品加工",
   "risk_summary": {
     "total": 8,

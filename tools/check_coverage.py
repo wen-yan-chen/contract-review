@@ -19,11 +19,25 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
 DATA = Path(r"D:\contest-32\data")
 GEN = r"D:\contest-32\tools\gen_dataset.py"
+
+
+def _present(text: str, body: str) -> bool:
+    """支持 {amount} 这类占位符：占位符位置匹配任意非空内容。"""
+    if not text:
+        return False
+    if "{" not in text:
+        return text in body
+    # 先切分再逐段转义，避免把占位符的花括号也转义掉
+    parts = re.split(r"(\{[^}]+\})", text)
+    pattern = "".join(".+?" if (p.startswith("{") and p.endswith("}")) else re.escape(p)
+                      for p in parts if p)
+    return re.search(pattern, body, re.S) is not None
 
 
 def load_rule_texts() -> dict[str, dict]:
@@ -62,8 +76,8 @@ def main() -> int:
         n_ok = n_bad = 0
         missing = []
         for rid, t in texts.items():
-            has_bad = bool(t["bad"]) and t["bad"] in body
-            has_ok = bool(t["ok"]) and t["ok"] in body
+            has_bad = _present(t["bad"], body)
+            has_ok = _present(t["ok"], body)
             if has_bad:
                 n_bad += 1
             elif has_ok:

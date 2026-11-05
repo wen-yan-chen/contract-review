@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 101,
-  "char_total": 11341,
+  "char_total": 11321,
   "industry": "农业合作社",
   "risk_summary": {
     "total": 7,

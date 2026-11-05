@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 97,
-  "char_total": 10688,
+  "char_total": 10668,
   "industry": "精密仪器",
   "risk_summary": {
     "total": 7,

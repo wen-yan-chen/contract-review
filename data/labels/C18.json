@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 101,
-  "char_total": 11045,
+  "char_total": 11025,
   "industry": "医疗器械流通",
   "risk_summary": {
     "total": 5,

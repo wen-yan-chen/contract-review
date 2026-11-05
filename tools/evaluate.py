@@ -114,9 +114,13 @@ def match_one(label: dict, pred: dict, clauses: list[dict],
 
         q = (pr.get("quote") or "").strip()
         text = clause_text.get(k[0], "")
+        lab_q = (lab.get("quote") or "").strip()
         exact = bool(q) and q in text
-        sim = difflib.SequenceMatcher(None, q, (lab.get("quote") or "").strip()).ratio()
-        if exact and sim >= LOCATE_SIM:
+        # 定位正确的判定：引用能在原文中定位，且与标注引用指向同一处
+        # 模型引用整条（包含标注片段）也算正确——跨度更大但定位无误
+        sim = difflib.SequenceMatcher(None, q, lab_q).ratio()
+        same_span = sim >= LOCATE_SIM or (lab_q and (lab_q in q or q in lab_q))
+        if exact and same_span:
             located += 1
 
         if pr.get("risk_level") == lab.get("risk_level"):

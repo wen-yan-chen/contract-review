@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 97,
-  "char_total": 10643,
+  "char_total": 10623,
   "industry": "小微企业",
   "risk_summary": {
     "total": 0,

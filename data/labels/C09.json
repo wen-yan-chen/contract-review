@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 97,
-  "char_total": 10578,
+  "char_total": 10558,
   "industry": "物流公司",
   "risk_summary": {
     "total": 8,

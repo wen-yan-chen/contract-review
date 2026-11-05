@@ -5,7 +5,7 @@
   "parser_version": "split-v1",
   "dataset_version": "gen-v2",
   "clauses_total": 100,
-  "char_total": 10611,
+  "char_total": 10592,
   "industry": "汽车零部件",
   "risk_summary": {
     "total": 5,
