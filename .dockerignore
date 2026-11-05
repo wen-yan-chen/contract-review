@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
+_scratch/
+.acl-recovery/
+docs/
+*.bak
+*.log
+.env
+data/uploads/
+.DS_Store

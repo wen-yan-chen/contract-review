@@ -1,0 +1,74 @@
+{
+  "credit_id": "CR-2026-0311",
+  "borrower": "衡远智造（模拟）有限公司",
+  "approved_amount": "3000万元",
+  "approved_rate": "LPR+80BP",
+  "approved_guarantee": "房产抵押",
+  "term_months": 24,
+  "conditions": [
+    "抵押登记完成后方可放款",
+    "借款人自有资金比例不低于 30%",
+    "按季提交财务报表"
+  ],
+  "expiry": "2026-12-31",
+  "currency": "CNY",
+  "normalization_hints": {
+    "loan_amount": "去除空格与千分位，「万元」统一换算为万元数值后比较",
+    "execution_rate": "解析为「基准+BP」结构，LPR+XBP 与 X 个基点等价，比较 BP 整数",
+    "guarantee_type": "归一为 信用/保证/抵押/质押 及其组合，按集合包含关系比较",
+    "term_months": "统一换算为月"
+  },
+  "inconsistencies": [
+    {
+      "contract_id": "C03",
+      "field": "loan_amount",
+      "contract_value": "5000万元",
+      "credit_report_value": "3000万元",
+      "level": "高",
+      "note": "合同借款金额超出授信批复额度 2000 万元，属超授权放款。"
+    },
+    {
+      "contract_id": "C04",
+      "field": "guarantee_type",
+      "contract_value": "信用",
+      "credit_report_value": "房产抵押",
+      "level": "高",
+      "note": "授信批复要求房产抵押，合同按信用方式发放，担保条件未落实即放款。"
+    },
+    {
+      "contract_id": "C05",
+      "field": "execution_rate",
+      "contract_value": "LPR+150BP",
+      "credit_report_value": "LPR+80BP",
+      "level": "中",
+      "note": "合同执行利率较授信批复高 70BP，超出定价授权区间。"
+    }
+  ],
+  "comparison_basis": [
+    {
+      "contract_id": "C03",
+      "credit_id": "CR-2026-0311",
+      "approved_amount": "3000万元",
+      "approved_rate": "LPR+80BP",
+      "approved_guarantee": "房产抵押",
+      "term_months": 24
+    },
+    {
+      "contract_id": "C04",
+      "credit_id": "CR-2026-0312",
+      "approved_amount": "1200万元",
+      "approved_rate": "LPR+80BP",
+      "approved_guarantee": "房产抵押",
+      "term_months": 24
+    },
+    {
+      "contract_id": "C05",
+      "credit_id": "CR-2026-0313",
+      "approved_amount": "2000万元",
+      "approved_rate": "LPR+80BP",
+      "approved_guarantee": "质押及保证",
+      "term_months": 12
+    }
+  ],
+  "disclaimer": "本授信批复为虚构模拟数据，仅用于评测合同要素与授信条件的一致性比对，不涉及任何真实主体。"
+}

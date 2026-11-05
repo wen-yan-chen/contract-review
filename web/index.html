@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>贷款合同审查</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="icon-btn" id="btn-side" title="收起/展开侧栏" aria-label="收起或展开侧栏">
+      <span class="bars"></span>
+    </button>
+
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-name">贷款合同审查</span>
+    </div>
+
+    <div class="topbar-mid">
+      <div class="contract-meta" id="contract-meta"></div>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" id="btn-print">打印</button>
+      <button class="btn btn-primary" id="btn-upload">上传合同</button>
+      <input type="file" id="file-input" accept=".docx,.pdf,.txt,.md" hidden>
+    </div>
+  </div>
+</header>
+
+<div class="statusbar" id="statusbar" hidden>
+  <span class="dot"></span><span id="status-text"></span>
+</div>
+
+<div class="notice">
+  审查结果由系统自动生成，仅作为合同审查的辅助参考，不构成法律意见；最终以法务与审批人员的书面意见为准。
+</div>
+
+<main class="layout">
+
+  <!-- 侧栏：合同管理 -->
+  <aside class="panel panel-side">
+    <div class="panel-head">
+      <h2>合同</h2>
+      <button class="link-btn" id="btn-new" hidden>上传</button>
+    </div>
+    <div class="side-scroll" id="contract-list"></div>
+    <div class="side-foot" id="side-foot"></div>
+  </aside>
+
+  <!-- 左栏：合同原文 -->
+  <section class="panel panel-doc">
+    <div class="panel-head">
+      <h2>合同原文</h2>
+      <div class="panel-head-meta" id="doc-meta"></div>
+    </div>
+    <div class="doc-scroll" id="doc-scroll">
+      <article class="doc" id="doc"></article>
+    </div>
+  </section>
+
+  <div class="resizer" id="resizer" title="拖拽调整宽度"><span></span></div>
+
+  <!-- 右栏：审查意见 -->
+  <section class="panel panel-review">
+    <div class="panel-head">
+      <h2>审查意见</h2>
+      <div class="summary" id="summary"></div>
+    </div>
+
+    <div class="filter-row" id="filter-row">
+      <button class="chip is-on" data-level="all">全部</button>
+      <button class="chip" data-level="高">高 <span class="chip-n" data-n="高">0</span></button>
+      <button class="chip" data-level="中">中 <span class="chip-n" data-n="中">0</span></button>
+      <button class="chip" data-level="低">低 <span class="chip-n" data-n="低">0</span></button>
+    </div>
+
+    <div class="review-scroll" id="review-scroll">
+      <div id="risk-list"></div>
+
+      <section class="credit-block" id="credit-block" hidden>
+        <h3>授信批复比对</h3>
+        <table class="credit-table" id="credit-table"></table>
+      </section>
+
+      <p class="foot-note" id="foot-note"></p>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+services:
+  contract-review:
+    build: .
+    image: contract-review:1.0.0
+    container_name: contract-review
+    ports:
+      # 宿主端口可用 HOST_PORT 覆盖，避免与本机其他服务（如 supabase-kong 占 8000）冲突
+      - "${HOST_PORT:-8000}:8000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8000"
+      # Nexent 北向接口。Nexent 跑在宿主机 docker 里时用 host.docker.internal
+      NEXENT_BASE: ${NEXENT_BASE:-http://host.docker.internal:5013}
+      NEXENT_API_KEY: ${NEXENT_API_KEY:?请先在 .env 中填写 NEXENT_API_KEY}
+      TZ: Asia/Shanghai
+    extra_hosts:
+      # 让容器能访问宿主机上的 Nexent
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # 上传的合同与审查结果持久化到宿主机，容器重建不丢
+      - ./data:/app/data
+    restart: unless-stopped

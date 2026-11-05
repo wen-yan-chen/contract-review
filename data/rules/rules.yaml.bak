@@ -1,0 +1,1251 @@
+# 贷款合同审查规则库（40 条，四类各 10 条）
+# 由 tools/gen_dataset.py 生成；legal_basis 一律 pending，禁止编造法规名称与文号。
+- rule_id: R01
+  category: 利率
+  title: 利率基准约定不明
+  risk_type: 利率-基准不明
+  risk_level: 中
+  scope:
+  - 利率
+  - 基准
+  - LPR
+  - 定价
+  detect:
+    method: hybrid
+    keywords:
+    - 利率
+    - 市场
+    - 同业
+    - 自主确定
+    regex: 利率[^。]{0,20}(市场|同业|自主|参照)
+    llm_hint: 判断执行利率是否给出基准（LPR 品种）与加减点数、重定价方式
+  evidence_spec:
+  - 利率基准
+  - 加减点数
+  - 重定价方式
+  suggestion_template: 建议明确利率基准与加减点数，例如：执行利率为一年期贷款市场报价利率（LPR）加 80BP，重定价日为每年 1 月 1 日，合同期内加减点数不变。
+  suggestion_keywords:
+  - LPR
+  - 加减点数
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R02
+  category: 利率
+  title: 罚息/逾期利率超限
+  risk_type: 利率-罚息超限
+  risk_level: 高
+  scope:
+  - 逾期
+  - 罚息
+  - 复利
+  - 上限
+  detect:
+    method: hybrid
+    keywords:
+    - 罚息
+    - 逾期利率
+    - 倍
+    - 上浮
+    regex: 罚息[^。]{0,30}([2-9]|[两三四五六七八九十])\s*倍
+    llm_hint: 判断罚息利率是否显著高于合同利率（2 倍及以上）或明确排除上限
+  evidence_spec:
+  - 罚息倍数
+  - 计收基数
+  - 是否设上限
+  suggestion_template: 建议改为：逾期罚息按合同利率上浮 50% 计收，并与利息、复利合计不超过法律与司法解释规定的上限。
+  suggestion_keywords:
+  - 上浮
+  - 上限
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R03
+  category: 利率
+  title: 放款时预扣利息
+  risk_type: 利率-利息预扣
+  risk_level: 高
+  scope:
+  - 预扣
+  - 放款
+  - 本金
+  - 利息
+  detect:
+    method: hybrid
+    keywords:
+    - 预扣
+    - 预先扣除
+    - 到账
+    regex: (预扣|预先扣除)[^。]{0,20}利息
+    llm_hint: 判断是否约定放款时预先扣除利息、费用，使实际到账低于合同本金
+  evidence_spec:
+  - 预扣金额
+  - 实际到账金额
+  - 计息基数
+  suggestion_template: 建议删除预扣安排：利息自实际放款日起按季计收，放款时不得预扣利息或费用，实际到账金额应与合同本金一致。
+  suggestion_keywords:
+  - 实际放款日
+  - 不得预扣
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R04
+  category: 利率
+  title: 复利计收对象与周期不明
+  risk_type: 利率-复利不明
+  risk_level: 中
+  scope:
+  - 复利
+  - 计息
+  - 结息
+  detect:
+    method: hybrid
+    keywords:
+    - 复利
+    - 未付利息
+    - 计收
+    regex: 复利[^。]{0,30}(另行商定|内部管理|由.{0,8}确定)
+    llm_hint: 判断复利的计收对象（仅未付利息）、基数与周期是否明确
+  evidence_spec:
+  - 复利对象
+  - 计收基数
+  - 计收周期
+  suggestion_template: 建议明确复利计收对象与周期，例如：对未按期支付的利息按罚息利率计收复利，复利以未付利息为基数、按季计收，不计入本金。
+  suggestion_keywords:
+  - 未付利息
+  - 按季
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R05
+  category: 利率
+  title: 出借人可单方调整利率且无通知义务
+  risk_type: 利率-单方调息
+  risk_level: 中
+  scope:
+  - 调息
+  - 单方
+  - 通知
+  detect:
+    method: hybrid
+    keywords:
+    - 单方调整
+    - 调整利率
+    - 无需通知
+    regex: (单方|自行)[^。]{0,12}(调整|变更)[^。]{0,12}利率
+    llm_hint: 判断利率调整是否可单方发起、是否附通知义务与触发条件
+  evidence_spec:
+  - 调整触发条件
+  - 通知义务
+  - 生效时点
+  suggestion_template: 建议限定调息触发条件与程序：仅可依 LPR 变动同向调整，并应于调整前 5 个工作日书面通知借款人，未通知的调整对借款人不发生效力。
+  suggestion_keywords:
+  - 书面通知
+  - LPR
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R06
+  category: 利率
+  title: 计息天数口径矛盾（360 与 365 并存）
+  risk_type: 利率-计息天数矛盾
+  risk_level: 低
+  scope:
+  - 计息
+  - 日利率
+  - 天数
+  detect:
+    method: hybrid
+    keywords:
+    - 三百六十
+    - 三百六十五
+    - 日利率
+    regex: 三百六十(?!五)
+    llm_hint: 判断同一合同内是否并存 360 与 365 两种计息口径
+  evidence_spec:
+  - 日利率折算基数
+  - 计息天数规则
+  - 冲突处理约定
+  suggestion_template: 建议统一计息口径：日利率＝年利率÷365，计息天数按实际天数计算，删除 360 天口径及「以系统计算结果为准」的表述。
+  suggestion_keywords:
+  - '365'
+  - 统一
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R07
+  category: 利率
+  title: LPR 变动后未约定重定价日与方式
+  risk_type: 利率-重定价缺失
+  risk_level: 中
+  scope:
+  - 重定价
+  - LPR
+  - 调整
+  detect:
+    method: hybrid
+    keywords:
+    - 重定价
+    - 另行协商
+    - LPR
+    regex: (重定价|重新定价)[^。]{0,24}(另行协商|协商确定)
+    llm_hint: 判断 LPR 变动后是否有明确的重定价日、重定价方式与加减点数处理
+  evidence_spec:
+  - 重定价日
+  - 重定价方式
+  - 加减点数是否固定
+  suggestion_template: 建议补充重定价日与重定价方式：重定价日为每年 1 月 1 日，按当日同期限 LPR 加原加减点数确定新执行利率，无需另行协商。
+  suggestion_keywords:
+  - 重定价日
+  - 加减点数
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R08
+  category: 利率
+  title: 手续费/管理费未折算年化
+  risk_type: 利率-费用未折算
+  risk_level: 中
+  scope:
+  - 费用
+  - 管理费
+  - 综合成本
+  detect:
+    method: hybrid
+    keywords:
+    - 管理费
+    - 手续费
+    - 服务费
+    regex: (管理费|手续费|服务费)[^。]{0,24}(百分|%)
+    llm_hint: 判断各项费用是否按年化口径折算并计入综合融资成本披露
+  evidence_spec:
+  - 费用项目
+  - 收取方式
+  - 折算年化结果
+  suggestion_template: 建议将各项费用折算为年化综合融资成本并在合同中披露，或取消账户管理费，避免以费用形式变相提高实际利率。
+  suggestion_keywords:
+  - 年化
+  - 综合融资成本
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R09
+  category: 利率
+  title: 提前还款违约金过高
+  risk_type: 利率-提前还款违约金
+  risk_level: 中
+  scope:
+  - 提前还款
+  - 违约金
+  - 补偿金
+  detect:
+    method: hybrid
+    keywords:
+    - 提前还款
+    - 违约金
+    - 补偿金
+    regex: 提前还款[^。]{0,24}(百分之[三-九]|[3-9]\s*%)
+    llm_hint: 判断提前还款违约/补偿金是否超过剩余本金 3% 或明显高于资金重配成本
+  evidence_spec:
+  - 违约金比例
+  - 计算基数
+  - 是否设上限
+  suggestion_template: 建议下调提前还款违约金，例如按提前还款金额的 1% 计收，且不超过对应三个月利息，已计收利息按实际用款天数结算。
+  suggestion_keywords:
+  - 1%
+  - 三个月利息
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R10
+  category: 利率
+  title: 起息日与放款日不一致且未说明
+  risk_type: 利率-起息日不一致
+  risk_level: 低
+  scope:
+  - 起息日
+  - 放款日
+  - 计息
+  detect:
+    method: hybrid
+    keywords:
+    - 起息日
+    - 放款日
+    - 签订之日
+    regex: 起息日[^。]{0,24}签订之日
+    llm_hint: 判断起息日是否与出借人实际放款日不一致，且未说明理由
+  evidence_spec:
+  - 起息日
+  - 实际放款日
+  - 差异说明
+  suggestion_template: 建议将起息日统一为实际放款日：利息自借款本金划付至借款人账户之日起计算，避免签约日至放款日之间产生无对价计息。
+  suggestion_keywords:
+  - 实际放款日
+  - 划付
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R11
+  category: 担保
+  title: 保证方式未明确为连带责任保证
+  risk_type: 担保-保证方式不明
+  risk_level: 中
+  scope:
+  - 保证
+  - 连带责任
+  - 担保方式
+  detect:
+    method: hybrid
+    keywords:
+    - 提供保证
+    - 保证方式
+    - 连带责任
+    regex: 提供保证[^。]{0,12}(方式|依照法律)
+    llm_hint: 判断是否仅写「提供保证」而未明确为连带责任保证
+  evidence_spec:
+  - 保证方式
+  - 是否连带
+  - 主张路径
+  suggestion_template: 建议明确保证方式：保证人自愿为该笔借款提供连带责任保证，出借人有权在主债务履行期限届满后直接要求保证人承担保证责任。
+  suggestion_keywords:
+  - 连带责任保证
+  - 直接要求
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R12
+  category: 担保
+  title: 担保范围未覆盖利息与实现债权费用
+  risk_type: 担保-担保范围不足
+  risk_level: 中
+  scope:
+  - 担保范围
+  - 利息
+  - 实现债权费用
+  detect:
+    method: hybrid
+    keywords:
+    - 担保范围
+    - 仅限
+    - 不包括
+    regex: 担保范围[^。]{0,24}(仅限|不包括)
+    llm_hint: 判断担保范围是否覆盖本金、利息、罚息、违约金与实现债权费用
+  evidence_spec:
+  - 担保范围列举
+  - 是否含实现债权费用
+  - 是否含罚息
+  suggestion_template: 建议扩大担保范围至本金、利息、罚息、复利、违约金、损害赔偿金及实现债权的费用（含诉讼费、律师费、保全费）。
+  suggestion_keywords:
+  - 实现债权的费用
+  - 罚息
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R13
+  category: 担保
+  title: 保证期间约定不明或过短
+  risk_type: 担保-保证期间过短
+  risk_level: 高
+  scope:
+  - 保证期间
+  - 保证责任
+  - 六个月
+  detect:
+    method: hybrid
+    keywords:
+    - 保证期间
+    - 三个月
+    - 期间届满
+    regex: 保证期间[^。]{0,24}(三个月|[一二三四五]个月|六个月)
+    llm_hint: 判断保证期间是否短于主债务履行期限届满后六个月，或约定不明
+  evidence_spec:
+  - 保证期间长度
+  - 起算点
+  - 主张方式
+  suggestion_template: 建议保证期间不短于主债务履行期限届满之日起三年，并明确期间内出借人主张权利的方式。
+  suggestion_keywords:
+  - 三年
+  - 主张
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R14
+  category: 担保
+  title: 抵押物未约定办理登记及登记责任
+  risk_type: 担保-抵押未登记
+  risk_level: 高
+  scope:
+  - 抵押
+  - 登记
+  - 优先受偿
+  detect:
+    method: hybrid
+    keywords:
+    - 抵押
+    - 登记
+    - 抵押权
+    regex: 抵押权[^。]{0,12}签订时设立|(无需|不)办理抵押登记
+    llm_hint: 判断是否约定抵押登记的义务、期限与责任，以及抵押权设立时点表述是否正确
+  evidence_spec:
+  - 登记义务人
+  - 登记期限
+  - 抵押权设立时点
+  suggestion_template: 建议约定登记义务与放款前提：抵押人应于合同签订后 15 个工作日内配合办理抵押登记，登记完成后方可放款；因抵押人原因未按期登记的，出借人有权解除合同并宣布借款提前到期。
+  suggestion_keywords:
+  - 办理抵押登记
+  - 放款
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R15
+  category: 担保
+  title: 抵押率超限且未约定价值重估
+  risk_type: 担保-抵押率超限
+  risk_level: 中
+  scope:
+  - 抵押率
+  - 评估价值
+  - 重估
+  detect:
+    method: hybrid
+    keywords:
+    - 抵押率
+    - 评估
+    - 重估
+    regex: 抵押率[^。]{0,24}(百分之[一二三四五六七八九]十[5-9]|1[0-9]{2}%)
+    llm_hint: 判断抵押率是否超过审慎上限（通常 70%），以及是否约定抵押物价值重估
+  evidence_spec:
+  - 抵押物评估价值
+  - 担保债权金额
+  - 抵押率
+  - 重估安排
+  suggestion_template: 建议将抵押率控制在 70% 以内，并约定每年至少一次价值重估；重估后抵押率超限的，出借人有权要求追加担保。
+  suggestion_keywords:
+  - 抵押率
+  - 重估
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R16
+  category: 担保
+  title: 最高额担保未约定最高债权额
+  risk_type: 担保-最高额不明
+  risk_level: 高
+  scope:
+  - 最高额
+  - 最高债权额
+  - 担保范围
+  detect:
+    method: hybrid
+    keywords:
+    - 最高额
+    - 最高额度
+    - 债权额
+    regex: 最高额[^。]{0,30}(为准|不持异议)
+    llm_hint: 判断最高额担保是否写明具体最高债权额及其构成
+  evidence_spec:
+  - 最高债权额
+  - 是否含利息费用
+  - 超出部分处理
+  suggestion_template: 建议明确最高债权额及构成：所担保的最高债权额为人民币【】万元，包括本金、利息、罚息、复利、违约金及实现债权的费用，超出部分保证人不承担责任。
+  suggestion_keywords:
+  - 最高债权额
+  - 超出部分
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R17
+  category: 担保
+  title: 质物交付与保管责任不明
+  risk_type: 担保-质物交付不明
+  risk_level: 中
+  scope:
+  - 质押
+  - 质物
+  - 交付
+  - 保管
+  detect:
+    method: hybrid
+    keywords:
+    - 质物
+    - 交付
+    - 保管
+    regex: 质物[^。]{0,24}(另行商定|自行保管)
+    llm_hint: 判断质物的交付期限、交付方式与保管责任是否明确
+  evidence_spec:
+  - 交付期限
+  - 交付方式
+  - 保管责任与风险承担
+  suggestion_template: 建议明确质物交付期限、交付方式与保管责任：出质人应于合同签订后 5 个工作日内交付权利凭证，保管期间毁损灭失风险由出质人承担，未经出借人同意不得处分质物。
+  suggestion_keywords:
+  - 交付
+  - 保管
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R18
+  category: 担保
+  title: 担保人配偶同意缺位
+  risk_type: 担保-配偶同意缺位
+  risk_level: 中
+  scope:
+  - 保证人
+  - 配偶
+  - 夫妻共同债务
+  detect:
+    method: hybrid
+    keywords:
+    - 配偶
+    - 夫妻
+    - 共同财产
+    regex: (配偶|夫妻)[^。]{0,24}(同意|另行)
+    llm_hint: 判断自然人担保人是否取得配偶书面同意，以覆盖夫妻共同财产
+  evidence_spec:
+  - 配偶是否签署
+  - 同意文件形式
+  - 共同财产范围
+  suggestion_template: 建议要求保证人配偶签署同意担保的书面文件，并留存身份证明与签署过程记录，避免日后以夫妻共同债务范围为由抗辩。
+  suggestion_keywords:
+  - 配偶
+  - 书面文件
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R19
+  category: 担保
+  title: 保证人资格瑕疵（公益法人/国家机关）
+  risk_type: 担保-保证人资格瑕疵
+  risk_level: 高
+  scope:
+  - 保证人
+  - 资格
+  - 事业单位
+  detect:
+    method: hybrid
+    keywords:
+    - 事业单位
+    - 财政
+    - 保证人资格
+    regex: (事业单位|国家机关|社会团体)[^。]{0,24}保证
+    llm_hint: 判断保证人是否属于法律禁止担任保证人的主体（国家机关、公益性事业单位等）
+  evidence_spec:
+  - 保证人主体性质
+  - 是否营利法人
+  - 代偿能力
+  suggestion_template: 建议更换保证人：以营利法人或具备代偿能力的自然人为保证人，并在签约前核验其主体资格与代偿能力，避免因保证人资格瑕疵导致保证合同无效。
+  suggestion_keywords:
+  - 营利法人
+  - 代偿能力
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R20
+  category: 担保
+  title: 约定排除司法程序自行处置担保物
+  risk_type: 担保-自行处置担保物
+  risk_level: 高
+  scope:
+  - 担保物
+  - 处置
+  - 拍卖
+  - 流质
+  detect:
+    method: hybrid
+    keywords:
+    - 自行变卖
+    - 自行处置
+    - 无需经人民法院
+    regex: (自行变卖|自行处置)[^。]{0,24}抵押物
+    llm_hint: 判断是否约定出借人可不经司法程序自行处置担保物、直接抵偿债务
+  evidence_spec:
+  - 处置主体
+  - 是否经司法程序
+  - 通知义务
+  - 价款结算方式
+  suggestion_template: 建议删除自行处置安排：主张担保物权应经协议折价、拍卖或变卖程序，协议不成时请求人民法院拍卖、变卖，处置所得按法定顺序清偿。
+  suggestion_keywords:
+  - 拍卖
+  - 人民法院
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R21
+  category: 违约
+  title: 违约情形过宽（任何违反即可加速到期）
+  risk_type: 违约-情形过宽
+  risk_level: 中
+  scope:
+  - 违约
+  - 加速到期
+  - 催告
+  detect:
+    method: hybrid
+    keywords:
+    - 任何违反
+    - 均构成违约
+    - 提前到期
+    regex: 违反本合同任何
+    llm_hint: 判断是否将任何轻微违反一律列为违约并可宣布提前到期
+  evidence_spec:
+  - 违约情形列举
+  - 是否区分严重程度
+  - 催告与宽限
+  suggestion_template: 建议限缩违约情形并设置催告程序：借款人发生约定情形且经书面催告后 10 个工作日内未纠正的，方构成违约。
+  suggestion_keywords:
+  - 催告
+  - 纠正
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R22
+  category: 违约
+  title: 加速到期条件纯单方随意
+  risk_type: 违约-加速到期随意
+  risk_level: 中
+  scope:
+  - 加速到期
+  - 违约事件
+  - 说明理由
+  detect:
+    method: hybrid
+    keywords:
+    - 随时宣布
+    - 无需说明理由
+    - 提前到期
+    regex: (随时|认为)[^。]{0,24}宣布[^。]{0,12}提前到期
+    llm_hint: 判断加速到期是否绑定具体违约事件并附说明理由义务
+  evidence_spec:
+  - 触发条件
+  - 是否需说明理由
+  - 通知形式
+  suggestion_template: 建议将加速到期绑定具体违约事件并附说明理由义务：仅在约定违约事件发生且催告期届满未纠正时，出借人方可书面宣布提前到期并载明依据。
+  suggestion_keywords:
+  - 违约事件
+  - 书面
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R23
+  category: 违约
+  title: 违约金过高（超实际损失 30%）
+  risk_type: 违约-违约金过高
+  risk_level: 高
+  scope:
+  - 违约金
+  - 损失
+  - 赔偿
+  detect:
+    method: hybrid
+    keywords:
+    - 违约金
+    - 百分之三十
+    - 本金
+    regex: 违约金[^。]{0,24}百分之(二十|三十|四十|五十)
+    llm_hint: 判断违约金标准是否显著超过可证明的实际损失
+  evidence_spec:
+  - 违约金比例
+  - 计算基数
+  - 与实际损失的关系
+  suggestion_template: 建议以实际损失为限：借款人违约的，应赔偿出借人因此产生的实际损失（含诉讼费、律师费、保全费），不再另行约定按本金比例计算的违约金。
+  suggestion_keywords:
+  - 实际损失
+  - 诉讼费
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R24
+  category: 违约
+  title: 违约金与罚息重复计算
+  risk_type: 违约-违约金重复计算
+  risk_level: 中
+  scope:
+  - 违约金
+  - 罚息
+  - 重复计收
+  detect:
+    method: hybrid
+    keywords:
+    - 并行计算
+    - 互不抵扣
+    - 违约金
+    regex: 罚息[^。]{0,40}违约金[^。]{0,24}(并行|同时)
+    llm_hint: 判断是否在罚息之外并行计收违约金，构成重复计收
+  evidence_spec:
+  - 罚息标准
+  - 违约金标准
+  - 是否重复计收
+  suggestion_template: 建议删除并行计收安排：逾期后仅按罚息利率计收罚息，违约金与罚息不重复计算，避免被认定为变相提高利率。
+  suggestion_keywords:
+  - 不重复
+  - 罚息
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R25
+  category: 违约
+  title: 未约定宽限期与催告程序
+  risk_type: 违约-无宽限期
+  risk_level: 低
+  scope:
+  - 宽限期
+  - 催告
+  - 逾期
+  detect:
+    method: hybrid
+    keywords:
+    - 宽限期
+    - 催告
+    - 次日
+    regex: (不设宽限期|无宽限期|无需催告)
+    llm_hint: 判断逾期后是否设置合理宽限期与催告程序
+  evidence_spec:
+  - 宽限期长度
+  - 催告方式
+  - 后果承担
+  suggestion_template: 建议设置合理宽限期与催告程序：还款日后 5 个工作日内经催告补足的，不视为违约，宽限期内按罚息利率计收利息。
+  suggestion_keywords:
+  - 宽限期
+  - 催告
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R26
+  category: 违约
+  title: 交叉违约未限定范围
+  risk_type: 违约-交叉违约无限定
+  risk_level: 中
+  scope:
+  - 交叉违约
+  - 其他债务
+  - 金额门槛
+  detect:
+    method: hybrid
+    keywords:
+    - 交叉违约
+    - 任何第三方
+    - 任何债务
+    regex: 任何第三方[^。]{0,24}任何债务
+    llm_hint: 判断交叉违约是否设定金额门槛、债务类型与主体范围
+  evidence_spec:
+  - 触发金额门槛
+  - 债务类型范围
+  - 是否需进入诉讼
+  suggestion_template: 建议为交叉违约设定金额门槛与范围：借款人对其他金融机构的债务逾期且单笔金额超过 100 万元的，方构成违约事件。
+  suggestion_keywords:
+  - 金额
+  - 逾期
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R27
+  category: 违约
+  title: 未约定实现债权费用承担
+  risk_type: 违约-实现债权费用缺失
+  risk_level: 低
+  scope:
+  - 实现债权费用
+  - 律师费
+  - 诉讼费
+  detect:
+    method: hybrid
+    keywords:
+    - 实现债权
+    - 律师费
+    - 自行承担
+    regex: 实现债权[^。]{0,24}自行承担
+    llm_hint: 判断是否约定诉讼费、律师费、保全费等实现债权费用由借款人承担
+  evidence_spec:
+  - 费用项目
+  - 承担主体
+  - 凭证要求
+  suggestion_template: 建议补充实现债权费用条款：因实现债权支出的诉讼费、律师费、保全费、公证费、差旅费由借款人承担。
+  suggestion_keywords:
+  - 律师费
+  - 诉讼费
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R28
+  category: 违约
+  title: 陈述保证义务过重且无救济
+  risk_type: 违约-陈述保证过重
+  risk_level: 低
+  scope:
+  - 陈述与保证
+  - 资料真实性
+  - 违约
+  detect:
+    method: hybrid
+    keywords:
+    - 任何时点
+    - 任何瑕疵
+    - 陈述保证
+    regex: 任何时点均真实[^。]{0,24}任何瑕疵
+    llm_hint: 判断陈述保证是否要求绝对无瑕疵、且任何细微不符即构成违约
+  evidence_spec:
+  - 保证标准
+  - 重大性门槛
+  - 救济与纠正期
+  suggestion_template: 建议将陈述保证限定于重大性标准：借款人保证资料在提供之日真实、准确、完整，发生重大变化时及时告知，非重大瑕疵不构成违约。
+  suggestion_keywords:
+  - 重大
+  - 告知
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R29
+  category: 违约
+  title: 未约定不可抗力与情势变更处理
+  risk_type: 违约-不可抗力缺失
+  risk_level: 低
+  scope:
+  - 不可抗力
+  - 情势变更
+  - 免责
+  detect:
+    method: hybrid
+    keywords:
+    - 不可抗力
+    - 情势变更
+    - 免责
+    regex: 不发生任何不可抗力
+    llm_hint: 判断是否排除不可抗力/情势变更的适用，或完全未作约定
+  evidence_spec:
+  - 不可抗力条款
+  - 通知与证明
+  - 后果处理
+  suggestion_template: 建议补充不可抗力与情势变更条款：受影响方应在事件发生后 15 日内提供证明，双方协商调整还款安排，互不承担违约责任。
+  suggestion_keywords:
+  - 不可抗力
+  - 协商
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R30
+  category: 违约
+  title: 出借人可单方变更合同条款
+  risk_type: 违约-单方变更
+  risk_level: 高
+  scope:
+  - 变更
+  - 单方
+  - 公告
+  detect:
+    method: hybrid
+    keywords:
+    - 单方变更
+    - 公告之日起生效
+    - 视为同意
+    regex: (单方变更|单方调整)[^。]{0,12}(条款|合同)
+    llm_hint: 判断是否赋予出借人单方变更合同条款的权利，以公告或继续履行视为同意
+  evidence_spec:
+  - 变更权主体
+  - 生效方式
+  - 借款人同意形式
+  suggestion_template: 建议删除单方变更权：合同变更须经双方协商一致并签署书面补充协议，未经借款人书面同意的变更对其不发生效力。
+  suggestion_keywords:
+  - 协商一致
+  - 书面
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R31
+  category: 合规
+  title: 格式条款未履行提示说明义务
+  risk_type: 合规-格式条款提示
+  risk_level: 高
+  scope:
+  - 格式条款
+  - 提示
+  - 说明义务
+  detect:
+    method: hybrid
+    keywords:
+    - 格式条款
+    - 加粗
+    - 逐条确认
+    regex: 相同字号与字重|无需逐条确认
+    llm_hint: 判断免责/加重责任/限制权利条款是否以显著方式提示并单独确认
+  evidence_spec:
+  - 提示方式
+  - 是否单独确认
+  - 留痕记录
+  suggestion_template: 建议对免责、加重责任、限制权利的条款采用加粗或下划线等显著方式提示，并设置借款人逐条签字确认栏，留存提示说明记录。
+  suggestion_keywords:
+  - 加粗
+  - 确认
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R32
+  category: 合规
+  title: 排除借款人主要权利、加重其责任
+  risk_type: 合规-无效格式条款
+  risk_level: 高
+  scope:
+  - 格式条款
+  - 无效
+  - 异议权
+  detect:
+    method: hybrid
+    keywords:
+    - 放弃
+    - 异议
+    - 抗辩
+    regex: 放弃[^。]{0,24}(异议|抗辩|诉讼)
+    llm_hint: 判断是否排除借款人的异议权、抗辩权、诉权等主要权利
+  evidence_spec:
+  - 被排除的权利
+  - 是否对等
+  - 无效风险
+  suggestion_template: 建议删除排除借款人异议权、抗辩权与诉权的表述：出借人行使权利应书面通知并说明依据，借款人有权提出异议并依法寻求救济。
+  suggestion_keywords:
+  - 异议
+  - 救济
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R33
+  category: 合规
+  title: 争议解决约定不明（诉讼与仲裁并存）
+  risk_type: 合规-争议解决不明
+  risk_level: 中
+  scope:
+  - 争议解决
+  - 仲裁
+  - 诉讼
+  detect:
+    method: hybrid
+    keywords:
+    - 仲裁
+    - 诉讼
+    - 二者
+    regex: 提起诉讼[^。]{0,30}(也可|或)[^。]{0,12}仲裁
+    llm_hint: 判断是否同时约定诉讼与仲裁，或仲裁机构名称不明确
+  evidence_spec:
+  - 争议解决方式
+  - 机构名称
+  - 是否唯一
+  suggestion_template: 建议二选一并明确机构：因本合同发生的争议协商不成的，向出借人所在地有管辖权的人民法院提起诉讼（或明确唯一的仲裁委员会名称）。
+  suggestion_keywords:
+  - 人民法院
+  - 唯一
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R34
+  category: 合规
+  title: 管辖约定与法定连接点无关
+  risk_type: 合规-管辖无连接点
+  risk_level: 中
+  scope:
+  - 管辖
+  - 连接点
+  - 法院
+  detect:
+    method: hybrid
+    keywords:
+    - 管辖
+    - 关联公司
+    - 住所地
+    regex: 管辖[^。]{0,30}(无关联|均无)
+    llm_hint: 判断约定管辖法院是否与争议有实际联系（被告住所地、合同履行地、签订地、标的物所在地等）
+  evidence_spec:
+  - 约定法院
+  - 与争议的连接点
+  - 是否有效
+  suggestion_template: 建议将管辖法院约定在与争议有实际联系的地点，例如合同签订地、履行地或出借人住所地人民法院。
+  suggestion_keywords:
+  - 实际联系
+  - 住所地
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R35
+  category: 合规
+  title: 通知送达未约定地址变更与视为送达
+  risk_type: 合规-送达条款缺失
+  risk_level: 低
+  scope:
+  - 送达
+  - 通知
+  - 地址变更
+  detect:
+    method: hybrid
+    keywords:
+    - 送达
+    - 地址
+    - 视为
+    regex: (视为已送达)[^。]{0,24}(无需|变更)?
+    llm_hint: 判断是否约定有效送达地址、变更通知义务与视为送达情形
+  evidence_spec:
+  - 送达地址确认
+  - 变更通知义务
+  - 视为送达情形
+  suggestion_template: 建议补充送达条款：确认首部地址为有效送达地址，变更应于 5 个工作日内书面通知，未通知的按原地址送达视为有效；并约定拒收、退回亦视为送达。
+  suggestion_keywords:
+  - 送达
+  - 工作日
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R36
+  category: 合规
+  title: 个人信息处理未单独同意/未告知目的
+  risk_type: 合规-个人信息
+  risk_level: 高
+  scope:
+  - 个人信息
+  - 同意
+  - 第三方提供
+  detect:
+    method: hybrid
+    keywords:
+    - 个人信息
+    - 单独同意
+    - 第三方
+    regex: 无需另行取得[^。]{0,12}同意
+    llm_hint: 判断个人信息处理是否取得单独同意、是否告知目的与范围、是否限制第三方共享
+  evidence_spec:
+  - 处理目的告知
+  - 同意形式
+  - 第三方共享限制
+  suggestion_template: 建议补充个人信息处理条款：处理目的、方式与范围应明确告知并取得单独同意；未经单独同意不得向第三方提供；借款人有权查询、更正与撤回同意。
+  suggestion_keywords:
+  - 单独同意
+  - 第三方
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R37
+  category: 合规
+  title: 未约定数据出境与第三方共享限制
+  risk_type: 合规-数据出境
+  risk_level: 中
+  scope:
+  - 数据出境
+  - 第三方共享
+  - 数据安全
+  detect:
+    method: hybrid
+    keywords:
+    - 境外
+    - 传输
+    - 关联机构
+    regex: 境外[^。]{0,24}(传输|提供)
+    llm_hint: 判断是否约定数据本地化、数据出境限制与第三方共享范围
+  evidence_spec:
+  - 是否允许出境
+  - 审批与同意程序
+  - 共享范围限制
+  suggestion_template: 建议明确数据本地化与出境限制：不得向境外提供借款人信息；确需出境的，应履行法定程序并取得单独同意，同时约定第三方共享的范围与限制。
+  suggestion_keywords:
+  - 不得
+  - 单独同意
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R38
+  category: 合规
+  title: 电子签名/电子合同效力条款缺失
+  risk_type: 合规-电子签名效力
+  risk_level: 低
+  scope:
+  - 电子签名
+  - 电子合同
+  - 效力
+  detect:
+    method: hybrid
+    keywords:
+    - 电子签名
+    - 电子合同
+    - 存证
+    regex: 电子签名[^。]{0,24}(以.{0,8}系统记录为准)
+    llm_hint: 判断电子签名效力、合同文本交付与存证安排是否约定
+  evidence_spec:
+  - 电子签名可靠性
+  - 合同文本交付
+  - 存证与时间戳
+  suggestion_template: 建议补充电子签名与电子合同效力条款：采用可靠电子签名，与书面形式具有同等效力；向借款人提供可下载的合同文本与签署存证记录。
+  suggestion_keywords:
+  - 可靠电子签名
+  - 存证
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R39
+  category: 合规
+  title: 未按年化披露综合融资成本
+  risk_type: 合规-综合成本未披露
+  risk_level: 中
+  scope:
+  - 综合融资成本
+  - 年化
+  - 披露
+  detect:
+    method: hybrid
+    keywords:
+    - 综合融资成本
+    - 年化
+    - 披露
+    regex: (仅披露|不在披露范围)
+    llm_hint: 判断是否以年化形式披露包含费用的综合融资成本
+  evidence_spec:
+  - 披露口径
+  - 费用项目
+  - 年化折算结果
+  suggestion_template: 建议按年化口径披露综合融资成本：列明利息、管理费、担保费、评估费等全部费用项目及折算后的年化成本，避免隐性成本。
+  suggestion_keywords:
+  - 年化
+  - 全部费用
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
+- rule_id: R40
+  category: 合规
+  title: 未约定合同解除后的清算顺序
+  risk_type: 合规-解除后清算缺失
+  risk_level: 低
+  scope:
+  - 解除
+  - 清算顺序
+  - 费用退还
+  detect:
+    method: hybrid
+    keywords:
+    - 解除
+    - 清算
+    - 顺序
+    regex: 清算顺序[^。]{0,24}单方确定
+    llm_hint: 判断合同解除后本金、利息、费用的清算顺序与已收费用的处理是否明确
+  evidence_spec:
+  - 清算顺序
+  - 费用是否退还
+  - 清偿期限
+  suggestion_template: 建议补充解除后的清算顺序：依次清偿实现债权费用、利息、本金，已收费用按实际用款期限结算并退还多收部分。
+  suggestion_keywords:
+  - 清算顺序
+  - 退还
+  legal_basis:
+    name: 待核验
+    article: 待核验
+    url: ''
+    verify_status: pending
+  disabled: false
