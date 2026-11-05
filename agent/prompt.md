@@ -1,11 +1,12 @@
-# 系统提示词（与 Nexent 平台内配置逐字一致）
+# 系统提示词（与 agent.json 的 prompt 字段逐字一致）
 
-> **为什么单独存档**：Nexent 的智能体导出（`agent.json`）只包含元数据，
-> 不含 `system_prompt`。因此提示词在此存档，作为交付与复现依据。
+> 本文件是 `agent.json` 中 `prompt` 字段的可读副本，**逐字相同（2196 字符）**，
+> 便于阅读、diff 与在平台间复制。
 >
 > - 智能体：`contract_review`（显示名 `contract_review_agent`）
 > - 模型：`deepseek-chat`，自定义参数 `temperature = 0`，`max_steps = 15`
 > - 知识库：`contract-rules`（源文件 `data/kb/rules-full.md`）
+> - 工具：`KnowledgeBaseSearchTool`（知识库检索）
 
 ---
 

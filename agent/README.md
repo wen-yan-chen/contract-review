@@ -1,16 +1,14 @@
 # 智能体配置说明
 
-本目录存放 Nexent 智能体的配置与存档。
+本目录存放 Nexent 智能体的导出配置与可读副本。
 
 | 文件 | 内容 | 说明 |
 |---|---|---|
-| `agent.json` | 平台导出的智能体元数据 | Nexent 导出功能的产品，含 name / display_name / description / max_steps |
-| `prompt.md` | 系统提示词全文 | **平台导出不含提示词**，因此单独存档；以本文件为准 |
+| `agent.json` | Nexent 导出的完整智能体配置 | **含提示词、工具、模型配置**，可直接导入平台 |
+| `prompt.md` | 系统提示词的 Markdown 副本 | 与 `agent.json` 的 `prompt` 字段逐字一致，便于阅读与 diff |
 | `配置清单.md` | 配置项逐条说明 | 建智能体时对照填写用 |
 
-## 重要说明：agent.json 不完整是平台限制
-
-Nexent 导出的 `agent.json` 只包含元数据：
+## agent.json 包含什么
 
 ```json
 {
@@ -23,25 +21,39 @@ Nexent 导出的 `agent.json` 只包含元数据：
       "description": "面向银行与持牌金融机构的贷款合同智能审查助手…",
       "author": "…",
       "max_steps": 15,
-      "requested_output_tokens": null
+      "prompt": "（2196 字符的完整系统提示词）",
+      "tools": [{"class_name": "KnowledgeBaseSearchTool", "name": "knowledge_base_search"}],
+      "model_ids": [1],
+      "model_names": ["deepseek-chat"],
+      "skill_names": [],
+      "managed_agents": [],
+      "model_params_override": {"1": {"extra_params": {}}}
     }
   },
   "mcp_info": []
 }
 ```
 
-**不包含**：`system_prompt`、知识库绑定、模型与参数配置。
-这些只能在 Nexent 控制台里查看或修改，因此本项目额外提供 `prompt.md` 作为提示词存档。
+| 字段 | 含义 |
+|---|---|
+| `prompt` | 系统提示词全文，与 `prompt.md` 逐字一致（2196 字符） |
+| `tools` | 已绑定知识库检索工具 `KnowledgeBaseSearchTool` |
+| `model_names` | `deepseek-chat` |
+| `max_steps` | 15 |
+| `mcp_info` | 空（本智能体未使用自定义 MCP） |
+| `skill_names` | 空（未使用自定义 Skill） |
 
-复现该智能体的完整步骤：
+> 说明：`tools` 里绑定的是知识库**检索工具**，具体的知识库实例
+> （`contract-rules`）在平台侧关联，不写进导出文件。复现时需在控制台
+> 「知识库管理」中把该知识库添加给智能体。
 
-1. Nexent 控制台 → 智能体配置 → 新建
-2. 名称 `contract_review`，显示名 `contract_review_agent`
-3. 描述见 `配置清单.md` 第 1 节
-4. 模型选 `deepseek-chat`，自定义参数 `temperature = 0`
-5. 提示词粘贴 `prompt.md` 中的内容
-6. 知识库管理 → 添加 `contract-rules`（内容来自 `data/kb/rules-full.md`）
-7. 发布
+## 导入即用
+
+在 Nexent 控制台：智能体开发 → 导入 → 上传 `agent.json`，即可得到一个
+与本项目一致（提示词、模型、知识库工具绑定齐全）的智能体。
+
+导入后仍需补一步：把知识库 `contract-rules`（内容来自 `data/kb/rules-full.md`）
+添加到该智能体，否则 `legal_basis` 会全部返回「未检索到权威依据」。
 
 ## 依赖的知识库
 
@@ -54,3 +66,9 @@ Nexent 导出的 `agent.json` 只包含元数据：
 
 > 知识库接口 `/nb/v1/knowledge/*` 需要「资产管理员」权限，普通北向 Key 无法调用，
 > 因此知识库的创建与上传必须在 Nexent 控制台完成。
+
+## 自定义参数
+
+平台「模型配置 → 自定义参数」中设置了 `temperature = 0`，用于降低输出波动。
+该参数不在 `agent.json` 的 `model_params_override.extra_params` 里（导出时为空），
+导入后需要手动补一次。
