@@ -2,8 +2,10 @@
 
 | 脚本 | 作用 | 什么时候跑 |
 |---|---|---|
-| `validate_labels.py` | 校验标注数据（quote 能否唯一定位、偏移是否正确、字段是否合法） | **每次生成/修改标注后立刻跑** |
+| `gate.py` | 确定性闸门：R16 合规定式否决、R38 缺陷定式补报（服务端落盘前也会调用） | 模型输出变化后，跑分之前 |
 | `evaluate.py` | 算验收指标（检出率/误报率/定位准确率/等级一致率/建议可用性） | 系统能输出结果后，每次调优都跑 |
+| `build_skills.py` | 从 `rules.yaml`/`compliant.yaml` 生成 4 个 Nexent 技能包并打 zip | 规则库改动后 |
+| `validate_labels.py` | 校验标注数据（quote 能否唯一定位、偏移是否正确、字段是否合法） | **每次生成/修改标注后立刻跑** |
 
 ## 环境
 
@@ -35,6 +37,7 @@ $py = "D:\python\python3.13.5\python.exe"
 & $py D:\contest-32\tools\validate_labels.py --data-root D:\contest-32\data --strict
 
 # 跑分并生成测试报告
+& $py D:\contest-32\tools\gate.py --data-root D:\contest-32\data
 & $py D:\contest-32\tools\evaluate.py --data-root D:\contest-32\data `
       --out D:\contest-32\docs\TEST_REPORT.md
 

@@ -1,0 +1,32 @@
+[
+  {
+    "action": "drop",
+    "rule_id": "R16",
+    "clause_no": "第四十六条",
+    "risk_type": "担保-最高额担保与单笔借款混用",
+    "reason": "条款已写明具体最高债权额，属合规定式",
+    "cid": "C02",
+    "before": 7,
+    "after": 6
+  },
+  {
+    "action": "add",
+    "rule_id": "R38",
+    "clause_no": "第八十三条",
+    "risk_type": "合规-电子签名效力",
+    "reason": "命中电子签名效力缺陷定式",
+    "cid": "C03",
+    "before": 5,
+    "after": 6
+  },
+  {
+    "action": "drop",
+    "rule_id": "R16",
+    "clause_no": "第三十八条",
+    "risk_type": "担保-最高额不明",
+    "reason": "条款已写明具体最高债权额，属合规定式",
+    "cid": "C11",
+    "before": 5,
+    "after": 4
+  }
+]

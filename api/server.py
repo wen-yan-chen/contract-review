@@ -34,7 +34,9 @@ PREDICTIONS = DATA / "predictions"
 META = DATA / "meta"
 
 sys.path.insert(0, str(ROOT / "api"))
+sys.path.insert(0, str(ROOT))
 from nexent_client import NexentClient, NexentError  # noqa: E402
+from tools.gate import apply_gates  # noqa: E402
 
 AGENT = "contract_review"
 MAX_BYTES = 20 * 1024 * 1024
@@ -370,12 +372,18 @@ def review(cid: str):
 
     obj.setdefault("risks", [])
     obj.setdefault("consistency_checks", [])
+
+    # 落盘前过一次确定性闸门：技能负责"过程可见"，这一步负责"结果确定"
+    obj, gate_log = apply_gates(obj, clauses)
+
     obj["_meta"] = {
         "elapsed_seconds": round(time.time() - t0, 1),
         "steps": out.get("steps", 0),
         "events": out.get("events", 0),
         "clauses": len(clauses),
     }
+    if gate_log:
+        obj["_meta"]["gate"] = gate_log
     (PREDICTIONS / f"{cid}.json").write_text(
         json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
     return obj

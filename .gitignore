@@ -21,3 +21,6 @@ data/meta/
 .DS_Store
 Thumbs.db
 .acl-recovery/
+
+# 提交用的 fork 克隆（不纳入本项目仓库）
+_submit/

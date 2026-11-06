@@ -19,11 +19,12 @@
 
 ## 导入方式
 
-1. Nexent 控制台 → 智能体开发 → **导入** → 上传本目录的 `agent.json`
-2. 平台会自动创建智能体（提示词、模型、知识库检索工具均已包含）
-3. **补充一步**：把知识库 `contract-rules` 添加到该智能体
+1. **先装技能**：技能仓库 → 我的 Skill → 创建 → 上传 `skills/*.zip`（四个）
+2. Nexent 控制台 → 智能体开发 → **导入** → 上传本目录的 `agent.json`
+3. 平台会自动创建智能体（提示词、模型、知识库检索工具均已包含）
+4. **补充一步**：把知识库 `contract-rules` 添加到该智能体
 （来源为本项目 `data/kb/rules-full.md`，40 条规则）
-4. 模型自定义参数 `temperature = 0`（降低输出波动，导入后需手动补）
+5. 模型自定义参数 `temperature = 0`（降低输出波动，导入后需手动补）
 
 ## 依赖
 
@@ -32,7 +33,7 @@
 |模型|`deepseek-chat`（或任意 OpenAI 兼容模型）|
 |知识库|`contract-rules`，内容为 40 条审查规则 + 合规范式|
 |向量模型|任一 embedding 模型（本地推荐 `bge-m3`）|
-|自定义 Skill / MCP|无|
+|自定义 Skill|`loan-rule-cards` / `missing-clause-audit` / `risk-selfcheck` / `suggestion-compiler`（见 `skills/`）|
 
 ## 输出示例
 

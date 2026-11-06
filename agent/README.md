@@ -21,11 +21,11 @@
       "description": "面向银行与持牌金融机构的贷款合同智能审查助手…",
       "author": "…",
       "max_steps": 15,
-      "prompt": "（2196 字符的完整系统提示词）",
+      "prompt": "（2942 字符的完整系统提示词）",
       "tools": [{"class_name": "KnowledgeBaseSearchTool", "name": "knowledge_base_search"}],
       "model_ids": [1],
       "model_names": ["deepseek-chat"],
-      "skill_names": [],
+      "skill_names": ["loan-rule-cards", "missing-clause-audit", "risk-selfcheck", "suggestion-compiler"],
       "managed_agents": [],
       "model_params_override": {"1": {"extra_params": {}}}
     }
@@ -36,8 +36,9 @@
 
 | 字段 | 含义 |
 |---|---|
-| `prompt` | 系统提示词全文，与 `prompt.md` 逐字一致（2196 字符） |
+| `prompt` | 系统提示词全文，与 `prompt.md` 逐字一致（2942 字符） |
 | `tools` | 已绑定知识库检索工具 `KnowledgeBaseSearchTool` |
+| `skill_names` | 依赖 4 个自定义 Skill，需**先安装**（见 `skills/`） |
 | `model_names` | `deepseek-chat` |
 | `max_steps` | 15 |
 | `mcp_info` | 空（本智能体未使用自定义 MCP） |
