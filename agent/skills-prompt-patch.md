@@ -81,19 +81,19 @@ python tools/export_kb.py
 
 ```powershell
 # 4.1 先只跑出错过的 6 份（约 5 分钟），确认改动方向对不对
-python _scratch\batch_run.py --ids C02,C03,C09,C12,C21,C25
+python tools\batch_run.py --ids C02,C03,C09,C12,C21,C25
 
 # 4.2 指标
 python tools\evaluate.py --data-root data
 
 # 4.3 方向对了再跑全量（28 份，约 20–25 分钟）
-python _scratch\batch_run.py
+python tools\batch_run.py
 
 # 4.4 生成正式报告
 python tools\evaluate.py --data-root data --out docs\TEST_REPORT.md
 
 # 4.5 三次一致性（约 2–3 分钟）
-python _scratch\consistency_test.py C13
+python tools\consistency_test.py C13
 ```
 
 **判读标准**

@@ -1,4 +1,4 @@
-# ===== 环境与密钥 =====
+﻿# ===== 环境与密钥 =====
 .env
 *.env.local
 
@@ -10,7 +10,6 @@ venv/
 *.egg-info/
 
 # ===== 运行时产物 =====
-_scratch/
 *.log
 data/uploads/
 data/predictions/U-*.json
@@ -24,3 +23,6 @@ Thumbs.db
 
 # 提交用的 fork 克隆（不纳入本项目仓库）
 _submit/
+
+# 本地临时预览
+.dsh-office-*/

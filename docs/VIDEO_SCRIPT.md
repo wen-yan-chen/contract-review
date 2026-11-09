@@ -169,7 +169,7 @@ data/
 **画面**：终端依次执行三条命令
 
 ```powershell
-python _scratch\batch_run.py            # 模型原始输出
+python tools\batch_run.py            # 模型原始输出
 python tools\gate.py --data-root data   # 过确定性闸门
 python tools\evaluate.py --data-root data --out docs\TEST_REPORT.md
 ```
