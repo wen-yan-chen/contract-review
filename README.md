@@ -143,11 +143,11 @@ python api/server.py            # 打开 http://127.0.0.1:8000/web/
 
 ## 演示视频
 
-完整业务闭环（上传 → 逐条审查 → 原文定位 → 修改建议 → 导出报告），6 分 56 秒：
+完整业务闭环（上传 → 逐条审查 → 原文定位 → 修改建议 → 导出报告），7 分钟：
 
-<https://github.com/wen-yan-chen/contract-review/releases/tag/v1.0.0>
+**<https://www.bilibili.com/video/BV1j1W96yEQY/>**
 
-> 视频 152 MB，以 Release 附件形式提供，不进入 Git 仓库（见 `.gitignore` 中的 `*.mp4`）。
+> 原始文件 152 MB，不进入 Git 仓库（见 `.gitignore` 中的 `*.mp4`），以 B 站外链形式提供。
 
 ---
 
