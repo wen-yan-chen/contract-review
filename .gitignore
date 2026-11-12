@@ -1,4 +1,4 @@
-﻿# ===== 环境与密钥 =====
+# ===== 环境与密钥 =====
 .env
 *.env.local
 
@@ -20,6 +20,12 @@ data/meta/
 .DS_Store
 Thumbs.db
 .acl-recovery/
+
+# ===== 大文件与临时文件 =====
+# 演示视频走 Release 附件，不提交进仓库
+*.mp4
+# Office 打开文件时产生的锁文件
+~$*
 
 # 提交用的 fork 克隆（不纳入本项目仓库）
 _submit/
