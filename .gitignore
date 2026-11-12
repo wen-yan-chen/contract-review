@@ -32,3 +32,6 @@ _submit/
 
 # 鏈湴涓存椂棰勮
 .dsh-office-*/
+
+# 本地临时目录
+_scratch/
